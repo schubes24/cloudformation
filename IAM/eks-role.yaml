@@ -1,5 +1,8 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: Create an IAM Role for EKS
+Parameters:  
+  Stage:
+    Type: String
 
 Resources:
   EKSAccessRole:
@@ -19,3 +22,7 @@ Resources:
         - arn:aws:iam::aws:policy/AmazonEKSServicePolicy
         - arn:aws:iam::aws:policy/AmazonEKSClusterPolicy
       RoleName: EKSAccessRole
+Outputs:
+  EKSAccessRole:
+    Description: The EKS Role Name
+    Value: !Ref EKSAccessRole

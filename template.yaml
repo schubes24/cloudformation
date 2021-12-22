@@ -1,0 +1,33 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+  Stage:
+    Type: String
+  EKSClusterName:
+    Type: String
+
+Resources:
+  IAMRole:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: IAM/eks-role.yaml
+      Parameters:
+        Stage: !Ref Stage
+  VPCResources:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: VPC/eks-vpc.yaml
+      Parameters:
+        Stage: !Ref Stage
+  EKSControlPlane:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: EKS/eks-controlplane.yaml
+      Parameters:
+        Stage: !Ref Stage
+        EKSClusterName: !Ref EKSClusterName
+        EKSIAMRole: !GetAtt IAMRole.Outputs.EKSAccessRole
+        ControlPlaneSecurityGroup: !GetAtt VPCResources.Outputs.ControlPlaneSecurityGroup
+        PublicSubnet01: !GetAtt VPCResources.Outputs.PublicSubnet01
+        PublicSubnet02: !GetAtt VPCResources.Outputs.PublicSubnet02
+        PrivateSubnet01: !GetAtt VPCResources.Outputs.PrivateSubnet01
+        PrivateSubnet02: !GetAtt VPCResources.Outputs.PrivateSubnet02
