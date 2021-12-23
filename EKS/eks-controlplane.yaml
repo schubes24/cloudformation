@@ -1,16 +1,45 @@
-EKSCluster:
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:  
+  Stage:
+    Type: String
+  EKSIAMRole:
+    Type: String
+    Description: The name of the IAM role for the EKS service to assume.    
+  EKSClusterName:
+    Type: String
+    Description: The desired name of your AWS EKS Cluster.
+  ControlPlaneSecurityGroup:
+    Type: String
+    Description:  Security group for the control plane 
+  PublicSubnet01:
+    Type: String
+    Description: public subnet 01 within the VPC  
+  PublicSubnet02:
+    Type: String
+    Description: public subnet 02 within the VPC  
+  PrivateSubnet01:
+    Type: String
+    Description: private subnet 01 within the VPC  
+  PrivateSubnet02:
+    Type: String
+    Description: private subnet 02 within the VPC
+
+Resources:
+  EKSCluster:
     Type: AWS::EKS::Cluster
     Properties:
-      Name: Test
-      Version: "1.23"
-      RoleArn: "arn:aws:iam::835958603956:role/EKSAccessRole"
+      Name: !Ref EKSClusterName
+      Version: "1.21"
+      RoleArn: !Join ["", ['arn:aws:iam::', !Ref 'AWS::AccountId', ':role/', !Ref EKSIAMRole]] 
       ResourcesVpcConfig:
         SecurityGroupIds:
-          - sg-068f4a7a5a3f147a1
+          - !Ref ControlPlaneSecurityGroup
         SubnetIds:
-          - subnet-075d4e18e1708a9f9
-          - subnet-02af07e51863b8382
-          - subnet-00b41774b536f281f
+          - !Ref PublicSubnet01
+          - !Ref PublicSubnet02
+          - !Ref PrivateSubnet01
+          - !Ref PrivateSubnet02
         EndpointPublicAccess: false
         EndpointPrivateAccess: true
         PublicAccessCidrs: [ "1.1.1.2/32" ]

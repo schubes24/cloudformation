@@ -4,6 +4,10 @@ Parameters:
     Type: String
   EKSClusterName:
     Type: String
+  KeyName:
+    Type: String
+  NodeGroupName:
+    Type: String
 
 Resources:
   IAMRole:
@@ -31,3 +35,18 @@ Resources:
         PublicSubnet02: !GetAtt VPCResources.Outputs.PublicSubnet02
         PrivateSubnet01: !GetAtt VPCResources.Outputs.PrivateSubnet01
         PrivateSubnet02: !GetAtt VPCResources.Outputs.PrivateSubnet02
+  EKSNodeGroup:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: EKS/eks-nodegroup.yaml
+      Parameters:
+        Stage: !Ref Stage
+        KeyName: !Ref KeyName
+        NodeGroupName: !Ref NodeGroupName
+        EKSClusterName: !Ref EKSClusterName
+        ControlPlaneSecurityGroup: !GetAtt VPCResources.Outputs.ControlPlaneSecurityGroup
+        Subnets: !GetAtt VPCResources.Outputs.SubnetIds
+        VpcId: !GetAtt VPCResources.Outputs.VpcId
+        PrivateSubnet01: !GetAtt VPCResources.Outputs.PrivateSubnet01
+        PrivateSubnet02: !GetAtt VPCResources.Outputs.PrivateSubnet02
+    DependsOn: EKSControlPlane
