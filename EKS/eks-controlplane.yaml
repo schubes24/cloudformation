@@ -40,9 +40,9 @@ Resources:
           - !Ref PublicSubnet02
           - !Ref PrivateSubnet01
           - !Ref PrivateSubnet02
-        EndpointPublicAccess: false
+        EndpointPublicAccess: true
         EndpointPrivateAccess: true
-        PublicAccessCidrs: [ "1.1.1.2/32" ]
+        #PublicAccessCidrs: [ "1.1.1.2/32" ]
       Logging:
         ClusterLogging:
           EnabledTypes:
@@ -50,4 +50,4 @@ Resources:
             - Type: audit
       Tags:
         - Key: "env"
-          Value: "test"
+          Value: "dev"
